@@ -38,13 +38,25 @@ data_set <- cbind(subject, y, x)
 # activity names and descriptive variable names
 data_set <- merge(activity_labels, data_set, by = "activity_number")
 data_set$activity_number <- NULL
+
+# Descriptive variable names
+names(data_set) <- gsub("^t", "Time", names(data_set))
+names(data_set) <- gsub("^f", "Frequency", names(data_set))
+names(data_set) <- gsub("Acc", "Accelerometer", names(data_set))
+names(data_set) <- gsub("Gyro", "Gyroscope", names(data_set))
+names(data_set) <- gsub("Mag", "Magnitude", names(data_set))
+names(data_set) <- gsub("BodyBody", "Body", names(data_set))
+
 # Index gets the position of all the variables that contain measurements on the
 # mean and standard deviation
 index <- grep("\\mean|std", features[,2]) + 2
 
-# Extracts a new data set, named data_set_2 with only the measurements of 
-# mean and standard deviation
+# Extracts a new data set, named data_set_2. It is exported as a .txt file named
+# tidy_data_set_1.txt with only the measurements of mean and standard deviation
 data_set_2 <- data_set[,c(1,2,index)]
+write.table(data_set_2, file = paste(WD, "/tidy_data_set_1.txt", sep = ""), row.name=FALSE)
 
-# Data set with the average of each variable for each activity and each subject
+# Data set with the average of each variable for each activity and each subject. It is named
+# data_set_3 and is exported as tidy_data_set_2.txt
 data_set_3 <- group_by(data_set_2, activity_label, subject) %>% summarise_each(funs(mean))
+write.table(data_set_3, file = paste(WD, "/tidy_data_set_2.txt", sep = ""), row.name=FALSE)
